@@ -1,9 +1,13 @@
-#overall friend acceptance on a given date
+friending: sender_id, receive_id,sent_date, accepted_date
+age: user_id, age_group
 
-SELECT date,
+#What is the same day acceptance rate for every day in the last week?
+
+SELECT t1.date,
 IFNULL(SUM(CASE WHEN t2.action=accept THEN 1 ELSE 0) / SUM(CASE WHEN t1.action = sent THEN 1 ELSE 0)，0） rate
 FROM tb t1
 LEFT JOIN tb t2
 ON t1.actor_uid = t2.target_uid AND t1.target_uid = t2.actor_uid
+WHERE t1.date>=DATEADD(day, -7,curdate()) #represent last week!!!
 GROUP BY 1
 ORDER BY 1
