@@ -1,3 +1,5 @@
+#Who has the most number of friends?
+
 SELECT t1.actor_id AS ID,
 SUM(CASE WHEN t1.action=’send_request’AND t2.action = ‘accept_request’THEN 1 ELSE 0 END)+
 SUM(CASE WHEN t1.action=’accept_request’AND t2.action = ‘send_request’THEN 1 ELSE 0 END)-
