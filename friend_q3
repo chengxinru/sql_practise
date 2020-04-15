@@ -1,0 +1,16 @@
+friending: sender_id, receive_id,sent_date, accepted_date，action
+age: user_id, age_group
+
+过去一周，每个age group， average sent request sent by users (# of friend request/# of user)
+
+SELECT df.age,
+IFNULL(SUM( CASE WHEN df.action=send THEN 1 ELSE 0) / SUM(COUNT DSITINCT sender)，0） request_sent
+FROM
+(SELECT f1.sender_id sender,
+f1.action action,
+f2.age_group age
+FROM friending f1
+LEFT JOIN age f2
+ON f1.sender_id = f2.user_id) df
+GROUP BY 1
+ORDER BY 1
