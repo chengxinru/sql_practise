@@ -1,3 +1,5 @@
+#overall friend acceptance on a given date
+
 SELECT date,
 IFNULL(SUM(CASE WHEN t2.action=accept THEN 1 ELSE 0) / SUM(CASE WHEN t1.action = sent THEN 1 ELSE 0)，0） rate
 FROM tb t1
