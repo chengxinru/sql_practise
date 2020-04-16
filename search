@@ -1,0 +1,58 @@
+table 1: searches (search_id is unique, primary key)
+date               |   search_id     | user_id | age_group | search_query
+'2020-01-01'   |    101             |   9991  |    'U30'      | 'justin biber'
+'2020-01-01'   |     102            |   9991  |     '30-50'   | 'menlo park'
+
+table 2: search _results （一个search_id 可以产生多个results）
+date             |   search_id     | result_id | result_type |   clicked
+'2020-01-01'   |        101   |  1001   |   'page'       |    TRUE
+'2020-01-01' |         101  |  1001    |  'event'      |    FALSE
+
+Q1: by each age group, how many unique users searched for "john" in the last 7
+days?
+
+SELECT age_group,COUNT (DISTINCT user_id)
+FROM searches
+WHERE   SEARCH...
+AND date...
+GROUP BY 1
+
+Q2: what are the top 10 search terms that are most likely to return at least one result
+about an Event?
+
+SELECT c.term, count(*)
+FROM
+(SELECT  a.search_query AS term
+FROM searches a
+LEFT JOIN search_results b
+ON a.search_id = b.search_id
+WHERE result_type = 'event') c
+GROUP BY 1 
+ORDER BY 1DESC
+LIMIT 10
+
+题目1，over the last 7 days, how many users made more than 10 searches？
+
+COUNT(*)
+FROM
+（SELECT user_id, 
+COUNT(search_id) search_num
+FROM searches
+WHERE date>=dateadd(day,-7,curdate())
+GROUP BY 1） df
+WHERE df.search_num >10
+
+题目2，What% of users clicked on a result about an Event?
+number of user click on event/number of user
+
+SELECT COUNT(DISTINCT b.click_id) / COUNT(DISTINCT searches.user_id)
+FROM
+searches
+LEFT JOIN
+(SELECT a.search_id, a.user_id click_id
+FROM searches a
+INNER JOIN search_results t2
+WHERE t2.clicked = TRUE AND t2.result_type = 'event') b
+ON searches.search_id = b.search_id
+
+
