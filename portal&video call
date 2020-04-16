@@ -1,0 +1,19 @@
+caller | recipient | date | duration， 
+
+1. top10 callers called most recipients last week.  
+
+SELECT caller, COUNT (recipient)
+FROM df
+WHERE date>=dateadd(day,-7,currdate)
+GROUP BY 1 DESC
+LIMIT 10
+
+2. new table: user | country | dau-flag, % dau from France called yesterday.
+
+ dau in france yesterday & called/overall dau in france yesterday
+ 
+ SELECT COUNT(DISTINCT t1.caller) / COUNT(DISTINCT t2.user)
+ FROM df1 t1
+ RIGHT JOIN df2 t2
+ ON t1.caller = t2.user 
+ WHERE t2.country = 'france' AND t2.dau-flag = 1 AND t1.date=curdate()-1
