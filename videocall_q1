@@ -1,0 +1,24 @@
+timestamp, callerid, receiverid, length
+1. 找出在20190101 这一天的新用户。新用户可以是打过电话的人，也可以是接过电话的人。
+
+WITH df1 
+AS
+(SELECT callerid AS id, date(timestamp) AS time
+FROM df
+UNION ALL
+SELECT receiverid AS id,date(timestamp) AS time
+FROM df)
+
+SELECT id
+FROM
+(SELECT id, MIN(time) AS first_usage
+FROM df1
+GROUP BY 1)
+WHERE first_usage = '2019-01-01'
+
+2. 对这一天的新用户，算出之后每一天的retention rate，直到今天，例如
+day, retention rate
+1, 0.9. 1point3acres
+2, 0.8
+
+
