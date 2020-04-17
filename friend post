@@ -1,0 +1,25 @@
+Table: user_actions
+date (STRING) | actor_id (BIGINT) | post_id (BIGINT) | relationship (STRING) | interaction (STRING)
+
+Table: user posts
+date (STRING) | poster_id (BIGINT) | post_id (BIGINT)
+
+#1. How many likes were made on Friend posts yesterday?
+
+SELECT COUNT(*)
+FROM user_actions
+WHERE reltionship = 'friend' AND interaction = 'like' AND date = curdate()-1 
+
+#2. If I were user 123, how would you calculate average number of likes on all of my posts?
+
+# of likes / # of posts 
+
+
+SELECT SUM(CASE WHEN c.action = 'like THEN 1 ELSE 0 END) / COUNT(*)
+FROM 
+(SELECT a. post_id, b.interaction action
+FROM userposts a
+LEFT JOIN user_actions b
+ON a.post_id = b.post_id
+WHERE a.poster_id = '123') c
+ 
