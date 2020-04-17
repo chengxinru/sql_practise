@@ -1,0 +1,26 @@
+table1: search
+search_id (primary key),user_id, search_query, date, age_group, result_type (events/groups/people)
+table2: search_results
+search_id (primary key), result_id, click (TRUE/FALSE)
+Q1: How many users searched "dog" more than 10 times in the last 7 days?
+
+SELECT COUNT(a.id)
+FROM
+(SELECT DISTINCT user_id as id, SUM(CASE WHEN search_query ilike 'dog'THEN 1 ELSE 0 END) as num
+FROM search
+WHERE DATE>=DATEADD(DATE, 0-7, CURDATE())
+GROUP BY 1) a
+WHERE a.num>10
+
+Q2: Which result type has most clicks within each age group for the search query "dog"?
+
+
+SELECT c.age, c.result_type, max(ck_num)
+(SELECT a.result_type, a.age_group AS age, sum(case when b.click = 'true' then 1 else 0 end) AS ck_num
+FROM search a
+LEFT JOIN search_results b
+ON a.search_id = b.search_id
+WHERE a.search_query ilike 'dog' 
+GROUP BY 1,2) C
+GROUP BY 1,2
+ORDER BY 1,2
